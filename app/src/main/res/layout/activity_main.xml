@@ -7,6 +7,7 @@
 
     <TextView
         android:text="город"
+        android:onClick="setCity"
         android:id="@+id/city_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
