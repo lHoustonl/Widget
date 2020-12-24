@@ -1,6 +1,7 @@
 package com.example.widget;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -26,6 +27,7 @@ public class ConnectFetch {
         new Thread(){
             public void run(){
                 final JSONObject json = ConnectFetch.getJSON(context, city);
+                View handler = null;
                 if(json == null){
                     handler.post(new Runnable(){
                         public void run(){
