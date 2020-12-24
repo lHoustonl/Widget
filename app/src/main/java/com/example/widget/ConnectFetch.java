@@ -1,6 +1,7 @@
 package com.example.widget;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,6 +15,34 @@ public class ConnectFetch {
     private static final String OPEN_WEATHER_MAP_API =
             "http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=metric";
     private static final String OPEN_WEATHER_ICON = "http://openweathermap.org/img/wn/{icon}@2x.png";
+    private OnConnectionCompleteListener listener;
+
+    public ConnectFetch(Context context, String city, OnConnectionCompleteListener listener)
+    {
+        this.listener = listener;
+    }
+
+    private void updateWeatherData(final String city, final Context context){
+        new Thread(){
+            public void run(){
+                final JSONObject json = ConnectFetch.getJSON(context, city);
+                if(json == null){
+                    handler.post(new Runnable(){
+                        public void run(){
+                            listener.onFail(city);
+                        }
+                    });
+                } else {
+                    handler.post(new Runnable(){
+                        public void run(){
+                            listener.onSuccess(json);
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
+
     public static JSONObject getJSON(Context context, String city){
         try {
             String urlString = String.format(OPEN_WEATHER_MAP_API, city,context.getString(R.string.weather_api_key));
@@ -60,5 +89,9 @@ public class ConnectFetch {
             e.printStackTrace();
         }
         return "";
+    }
+    public interface OnConnectionCompleteListener {
+        void onSuccess(JSONObject response);
+        void onFail(String message);
     }
 }

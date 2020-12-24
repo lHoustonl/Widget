@@ -26,32 +26,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        handler = new Handler();
-        updateWeatherData("Orenburg");
+        new  ConnectFetch(this, "Orenburg", new     ConnectFetch.OnConnectionCompleteListener() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                renderWeather(response);
+            }
+
+            @Override
+            public void onFail(String message) {
+
+                Toast.makeText(MainActivity.this,
+                        message,
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
-    private void updateWeatherData(final String city){
-        new Thread(){
-            public void run(){
-                final JSONObject json = ConnectFetch.getJSON(MainActivity.this, city);
-                if(json == null){
-                    handler.post(new Runnable(){
-                        public void run(){
-                            Toast.makeText(MainActivity.this,
-                                    city + "-информация не найдена",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
-                } else {
-                    handler.post(new Runnable(){
-                        public void run(){
-                            renderWeather(json);
-                        }
-                    });
-                }
-            }
-        }.start();
-    }
+
     private void renderWeather(JSONObject json){
         try {
 
