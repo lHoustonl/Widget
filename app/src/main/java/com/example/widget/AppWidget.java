@@ -24,7 +24,7 @@ import static com.example.widget.StaticWeatherAnalyze.getTemperatureField;
 public class AppWidget extends AppWidgetProvider {
     final String LOG_TAG = "myLogs";
 
-    static void updateAppWidget(final Context context,SharedPreferences sharedPreferences, AppWidgetManager appWidgetManager,
+    static void updateAppWidget(final Context context, SharedPreferences sharedPreferences, final AppWidgetManager appWidgetManager,
                                 final int appWidgetId) {
 
         // Читаем параметры Preferences
@@ -37,7 +37,7 @@ public class AppWidget extends AppWidgetProvider {
         new  ConnectFetch(context, widgetCity, new ConnectFetch.OnConnectionCompleteListener() {
             @Override
             public void onSuccess(JSONObject response) {
-                renderWeather(response,context,remoteViews,appWidgetId);
+                renderWeather(response,context,remoteViews,appWidgetId,appWidgetManager);
             }
 
             @Override
@@ -94,7 +94,7 @@ public class AppWidget extends AppWidgetProvider {
         manager.updateAppWidget(myWidget, rv);
     }
 
-    public static void renderWeather(JSONObject json, Context context, RemoteViews remoteViews, int appWidgetId){
+    public static void renderWeather(JSONObject json, Context context, RemoteViews remoteViews, int appWidgetId, AppWidgetManager appWidgetManager){
         try {
             AppWidgetTarget appWidgetTarget = new AppWidgetTarget(context, remoteViews, R.id.weather_icon, appWidgetId);
 
@@ -103,7 +103,7 @@ public class AppWidget extends AppWidgetProvider {
                     .asBitmap().
                     into( appWidgetTarget );
             remoteViews.setTextViewText(R.id.details_field, getTemperatureField(json));
-            pushWidgetUpdate(context, remoteViews);
+            appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
         }catch(Exception e){
             Log.e("SimpleWeather", "One or more fields not found in the JSON data");
         }

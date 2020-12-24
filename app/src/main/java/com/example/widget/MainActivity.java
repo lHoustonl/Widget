@@ -2,6 +2,7 @@ package com.example.widget;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -25,10 +26,19 @@ import static com.example.widget.StaticWeatherAnalyze.getLastUpdateTime;
 import static com.example.widget.StaticWeatherAnalyze.getTemperatureField;
 
 public class MainActivity extends AppCompatActivity {
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mSwipeRefreshLayout = findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setInfo();
+            }
+        });
         setInfo();
     }
 
@@ -37,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(JSONObject response) {
                 renderWeather(response);
+                mSwipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -45,8 +56,10 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this,
                         message,
                         Toast.LENGTH_LONG).show();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
+
     }
 
     public void changeCity(String city){
