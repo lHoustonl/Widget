@@ -10,6 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <receiver android:name=".AppWidget">
+            android:icon="@android:drawable/arrow_down_float"
+            android:label="@string/widget_name"
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
